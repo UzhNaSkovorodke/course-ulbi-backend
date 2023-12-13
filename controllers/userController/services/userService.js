@@ -2,11 +2,12 @@ const pool = require("../../../queries");
 
 class UserService {
     async getAll() {
-
     }
 
     async get() {
+    }
 
+    async update() {
     }
 
     async getByEmail(email) {
@@ -18,9 +19,6 @@ class UserService {
         }
     }
 
-    async update() {
-
-    }
 
     async create(userData) {
         try {
@@ -34,9 +32,9 @@ class UserService {
                 password: password,
                 email: email
             };
-           await pool.query('INSERT INTO users (id, username, password, email) VALUES ($1, $2, $3, $4)', [newUser.id, newUser.username, newUser.password, newUser.email]);
+            await pool.query('INSERT INTO users (id, username, password, email) VALUES ($1, $2, $3, $4)', [newUser.id, newUser.username, newUser.password, newUser.email]);
 
-           return newUser
+            return newUser
         } catch (error) {
             throw error;
         }
