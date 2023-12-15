@@ -32,8 +32,9 @@ class UserController {
 
     async login(req, res, next) {
         try {
-            const tokens = await LoginService.login(req.body)
-            res.status(200).json({ refresh: tokens.refreshToken, message: 'Юзер залогинен' })
+            const userDto = await LoginService.login(req.body)
+            res.set('refresh_token', userDto.tokens.refreshToken);
+            res.status(200).json({message: 'Юзер залогинен', credentials: {}})
         } catch (e) {
             next(e);
         }
@@ -41,8 +42,9 @@ class UserController {
 
     async registration(req, res, next) {
         try {
-            const tokens = await LoginService.registration(req.body)
-            res.status(200).json({ tokens: tokens, message: 'Юзер создан' })
+            const userDto = await LoginService.registration(req.body)
+            res.set('userDto', userDto);
+            res.status(200).json({message: 'Юзер создан'})
         } catch (e) {
             next(e);
         }
@@ -58,7 +60,7 @@ class UserController {
 
     async refresh(req, res, next) {
         try {
-
+            const accessToken = await LoginService.checkJwtRefresh(req.body)
         } catch (e) {
 
         }

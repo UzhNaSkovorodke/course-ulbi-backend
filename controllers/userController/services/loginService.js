@@ -3,6 +3,7 @@ const TokenService = require('./tokenService')
 const bcrypt = require('bcrypt')
 const pool = require("../../../queries");
 const ApiError = require("../../../exceptions/api-error");
+const UserDto = require("../userDto");
 
 class LoginService {
     async checkPassword(credentials, password) {
@@ -27,9 +28,14 @@ class LoginService {
             const hashPassword = await bcrypt.hash(password, 3)
             const user = await UserService.create({email, password: hashPassword, username})
 
-            const tokens = TokenService.generateTokens({username, password, email})
+            const tokens = TokenService.generateTokens({password})
             await TokenService.saveToken(user.id, tokens)
-            return tokens
+            return new UserDto({
+                email: user.email,
+                id: user.id,
+                username: user.username,
+                tokens: tokens
+            })
         } catch (e) {
             throw ApiError.BadRequest(e);
         }
@@ -42,17 +48,24 @@ class LoginService {
             await this.checkPassword(storedCredential[0], password)
             await this.checkUsername(storedCredential[0], username)
 
-            const tokens = TokenService.generateTokens({username, password, email})
+            const tokens = TokenService.generateTokens({password})
             await TokenService.updateToken(tokens, storedCredential[0].id)
-            return tokens
+            return new UserDto({
+                email: storedCredential[0].email,
+                id: storedCredential[0].id,
+                username: storedCredential[0].username,
+                tokens: tokens
+            })
         } catch (e) {
             throw e;
         }
     }
 
-    async checkJwtRefresh(userId, refreshToken) {
+    async checkJwtRefresh({userId, refreshToken}) {
         try {
-
+            if (!refreshToken || !userId) throw ApiError.UnauthorizedError('А че где твой токен или id губка? Иди впитывай, понюхал пивную пенку и думаешь такой смелый?');
+            const storedToken = await pool.query('SELECT * FROM tokens WHERE refresh = $1 AND userid = $2', [refreshToken, userId]);
+            console.log(storedToken)
         } catch (e) {
             throw ApiError.BadRequest(e)
         }

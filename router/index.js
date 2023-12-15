@@ -4,7 +4,7 @@ const router = new Router();
 
 router.get('/users', UserController.getAllUsers);
 router.post('/login/', UserController.login);
-router.post('/login/:token', UserController.refresh);
+router.post('/refresh', UserController.refresh);
 router.post('/users', UserController.registration);
 router.put('/users/:id', UserController.updateUser);
 
