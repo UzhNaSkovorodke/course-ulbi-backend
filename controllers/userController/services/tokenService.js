@@ -15,7 +15,13 @@ class TokenService {
     async saveToken(userId, tokens) {
         const lastIdResult = await pool.query('SELECT MAX(id) FROM tokens');
         const lastId = lastIdResult.rows[0].max ? lastIdResult.rows[0].max + 1 : '1';
-        await pool.query('INSERT INTO tokens (id, userid, jwt, refresh) VALUES ($1, $2, $3, $4)', [lastId, userId, tokens.accessToken, tokens.refreshToken]);
+        await pool.query('INSERT INTO tokens (id, userid, access, refresh) VALUES ($1, $2, $3, $4)', [lastId, userId, tokens.accessToken, tokens.refreshToken]);
+    }
+
+    async saveAccess(userId, access) {
+        const lastIdResult = await pool.query('SELECT MAX(id) FROM tokens');
+        const lastId = lastIdResult.rows[0].max ? lastIdResult.rows[0].max + 1 : '1';
+        await pool.query('INSERT INTO tokens (acess) VALUES ($1)', [lastId, userId, tokens.accessToken, tokens.refreshToken]);
     }
 
     async updateToken(tokens, userid) {
@@ -25,7 +31,7 @@ class TokenService {
                 // Если строка не найдена, выводим ошибку
                 throw ApiError.BadRequest('Строка с токенами не найдена')
             }
-            await pool.query('UPDATE tokens SET jwt = $1, refresh = $2 WHERE userid = $3', [tokens.accessToken, tokens.refreshToken, userid])
+            await pool.query('UPDATE tokens SET access = $1, refresh = $2 WHERE userid = $3', [tokens.accessToken, tokens.refreshToken, userid])
         } catch (e) {
             throw e
         }

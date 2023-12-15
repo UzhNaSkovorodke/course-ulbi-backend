@@ -8,9 +8,11 @@ const app = express()
 
 const corsOptions = {
     credentials: true,
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: '*',
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204,
+    "exposedHeaders": ['Access-Control-Allow-Origin', 'Access-Control-Expose-Headers', 'user_dto']
 };
 
 app.use(cors(corsOptions))
